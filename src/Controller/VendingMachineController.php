@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Exceptions\BadJsonContentException;
 use App\Service\InsertService;
+use App\Service\ReturnMoneyService;
 use App\Service\ServiceActionService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -14,7 +15,8 @@ final class VendingMachineController extends AbstractController
 {
     public function __construct(
         private ServiceActionService $serviceActionService,
-        private InsertService $insertService
+        private InsertService $insertService,
+        private ReturnMoneyService $returnMoneyService
     ){}
 
     #[Route('/vending/service', name: 'app_vending_service', methods: ['POST'])]
@@ -49,6 +51,14 @@ final class VendingMachineController extends AbstractController
         return $this->json([
             'message' => 'Insert action completed',
         ]);
-    
+
+    }
+
+    #[Route('/vending/return-money', name: 'app_vending_return_money', methods: ['GET'])]
+    public function returnMoney(): JsonResponse
+    {
+        $returned = $this->returnMoneyService->__invoke();
+        
+        return $this->json($returned);
     }
 }
