@@ -22,7 +22,6 @@ final class VendingMachineController extends AbstractController
     #[Route('/vending/service', name: 'app_vending_service', methods: ['POST'])]
     public function service(Request $request): JsonResponse
     {
-
         $data = json_decode($request->getContent(),true);
 
         if(!$data){
@@ -30,7 +29,6 @@ final class VendingMachineController extends AbstractController
         }
 
         $this->serviceActionService->__invoke($data);
-
 
         return $this->json([
             'message' => 'Service action completed',
