@@ -5,6 +5,7 @@ namespace App\EventListener;
 use App\Exceptions\VendingException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\KernelInterface;
 
@@ -35,7 +36,7 @@ class ExceptionListener
             $message = $exception->getMessage();
         }else if ($environment === 'dev') {
             $message = $exception->getMessage();
-            $statusCode = $exception->getCode() ?: 500;
+            $statusCode = Response::HTTP_INTERNAL_SERVER_ERROR;
         }
 
 

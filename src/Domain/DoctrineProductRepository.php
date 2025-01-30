@@ -2,12 +2,14 @@
 
 namespace App\Domain;
 
+use App\Domain\Interface\RepositoryCreateInterface;
 use App\Domain\Interface\RepositoryInterface;
 use App\Entity\Product;
 use App\Enum\ProductName;
 use Doctrine\ORM\EntityManagerInterface;
 
-class DoctrineProductRepository implements RepositoryInterface
+class DoctrineProductRepository implements RepositoryInterface, RepositoryCreateInterface
+
 {
     public function __construct(private EntityManagerInterface $entityManager) {}
     

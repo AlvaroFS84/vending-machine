@@ -3,7 +3,6 @@
 namespace App\Service;
 
 use App\Domain\Interface\RepositoryInterface;
-use App\Exceptions\BadJsonContentException;
 
 class ServiceActionService {
 

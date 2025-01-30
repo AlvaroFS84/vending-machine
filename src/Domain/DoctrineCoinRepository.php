@@ -2,12 +2,13 @@
 
 namespace App\Domain;
 
+use App\Domain\Interface\RepositoryCreateInterface;
 use App\Domain\Interface\RepositoryInterface;
 use App\Entity\Coin;
 use App\Enum\CurrencyValue;
 use Doctrine\ORM\EntityManagerInterface;
 
-class DoctrineCoinRepository implements RepositoryInterface
+class DoctrineCoinRepository implements RepositoryInterface,RepositoryCreateInterface
 {
     public function __construct(private EntityManagerInterface $entityManager) {}
     
@@ -33,5 +34,10 @@ class DoctrineCoinRepository implements RepositoryInterface
     {
         $query = $this->entityManager->createQuery('DELETE FROM App\Entity\Coin c');
         $query->execute();
+    }
+
+    public function findByValue(int $value): ?Coin
+    {
+        return $this->entityManager->getRepository(Coin::class)->findOneBy(['value' => $value]);
     }
 }
