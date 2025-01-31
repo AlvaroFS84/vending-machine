@@ -3,6 +3,9 @@
 namespace App\Controller;
 
 use App\Exceptions\BadJsonContentException;
+use App\Exceptions\MalformedProductOrderException;
+use App\Exceptions\MissingSelectionException;
+use App\Service\GetProductService;
 use App\Service\InsertService;
 use App\Service\ReturnMoneyService;
 use App\Service\ServiceActionService;
@@ -16,7 +19,8 @@ final class VendingMachineController extends AbstractController
     public function __construct(
         private ServiceActionService $serviceActionService,
         private InsertService $insertService,
-        private ReturnMoneyService $returnMoneyService
+        private ReturnMoneyService $returnMoneyService,
+        private GetProductService $getProductService
     ){}
 
     #[Route('/vending/service', name: 'app_vending_service', methods: ['POST'])]
@@ -58,5 +62,24 @@ final class VendingMachineController extends AbstractController
         $returned = $this->returnMoneyService->__invoke();
         
         return $this->json($returned);
+    }
+
+    #[Route('/vending/select', name: 'app_vending_select', methods: ['GET'])]
+    public function selectProduct(Request $request): JsonResponse
+    {
+        $selection = $request->query->get('selection');
+
+        if(!$selection){
+            throw new MissingSelectionException();
+        }
+        if(!str_starts_with($selection, 'GET-')){
+            throw new MalformedProductOrderException();
+        }
+
+
+        $result = $this->getProductService->__invoke($selection);
+        
+        
+        return $this->json($result);
     }
 }

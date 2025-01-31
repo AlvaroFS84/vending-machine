@@ -24,15 +24,5 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.exception }
     
-    App\Service\ServiceActionService:
-        arguments:
-            $coinRepository: '@App\Domain\DoctrineCoinRepository'
-            $productRepository: '@App\Domain\DoctrineProductRepository'
-    
-    App\Service\InsertService:
-        arguments:
-            $coinRepository: '@App\Domain\DoctrineCoinRepository'
-            $doctrineInsertedCoinRepository: '@App\Domain\DoctrineInsertedCoinRepository'
-
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

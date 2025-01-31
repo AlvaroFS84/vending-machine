@@ -2,8 +2,7 @@
 
 namespace App\Service;
 
-use App\Domain\InsertedCoinRepository;
-use App\Domain\Interface\RepositoryInterface;
+use App\Entity\Coin;
 use App\Entity\InsertedCoin;
 use App\Exceptions\NonExistingValueException;
 use Doctrine\ORM\EntityManagerInterface;
@@ -11,22 +10,20 @@ use Doctrine\ORM\EntityManagerInterface;
 class InsertService{
 
     public function __construct(
-        private RepositoryInterface $coinRepository,
-        private RepositoryInterface $doctrineInsertedCoinRepository,
         private EntityManagerInterface $entityManager
     ){}
    
-    public function __invoke(array $coin):void
+    public function __invoke(array $coinData):void
     {
-        if(isset($coin['value'])){
+        if(isset($coinData['value'])){
             
-            $coin = $this->coinRepository->findByValue($coin['value']*100);
+            $coin = $this->entityManager->getRepository(Coin::class)->findOneBy([ 'value' => $coinData['value']*100]);
 
             if(!$coin){
                 throw new  NonExistingValueException();
             }
                 
-            $insertedCoin = $this->doctrineInsertedCoinRepository->findByCoin($coin);
+            $insertedCoin = $this->entityManager->getRepository(InsertedCoin::class)->findByCoin($coin);
             
             if($insertedCoin){
                 $insertedCoin->setQuantity($insertedCoin->getQuantity()+1);

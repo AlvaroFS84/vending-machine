@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Coin;
 use App\Entity\InsertedCoin;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -16,28 +17,22 @@ class InsertedCoinRepository extends ServiceEntityRepository
         parent::__construct($registry, InsertedCoin::class);
     }
 
-    //    /**
-    //     * @return InsertedCoin[] Returns an array of InsertedCoin objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('i')
-    //            ->andWhere('i.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('i.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function findByCoin(Coin $coin): ?InsertedCoin
+    {
+        return $this->createQueryBuilder('i')
+            ->andWhere('i.coinId = :coin')
+            ->setParameter('coin', $coin)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
 
-    //    public function findOneBySomeField($value): ?InsertedCoin
-    //    {
-    //        return $this->createQueryBuilder('i')
-    //            ->andWhere('i.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function deleteAll(): void
+    {
+        $this->createQueryBuilder('i')
+            ->delete()
+            ->where('1 = 1') 
+            ->getQuery()
+            ->execute();
+    }
 }
