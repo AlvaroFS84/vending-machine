@@ -137,6 +137,13 @@
     }
 ]
 ```
+<br>
+
+## TESTING
+
+### Inside the container execute
+
+`php bin/phpunit`
 
 
 
