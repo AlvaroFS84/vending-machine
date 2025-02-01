@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Coin;
 use App\Entity\InsertedCoin;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -35,4 +36,19 @@ class InsertedCoinRepository extends ServiceEntityRepository
             ->getQuery()
             ->execute();
     }
+
+    public static function getTotalInserted(EntityManagerInterface $entityManager): int
+    {
+        
+        $insertedCoinRepository = $entityManager->getRepository(InsertedCoin::class);
+        $inserted = $insertedCoinRepository->findAll();
+        $total = 0;
+
+        foreach ($inserted as $insertedCoin) {
+            $total += $insertedCoin->getCoinId()->getValue()->value * $insertedCoin->getQuantity();
+        }
+
+        return $total;
+    }
+
 }

@@ -6,11 +6,16 @@ use App\Entity\Coin;
 use App\Entity\InsertedCoin;
 use App\Entity\Product;
 use App\Exceptions\NonExistingProductException;
+use App\Repository\InsertedCoinRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 class GetProductService{
 
-    public function __construct(private EntityManagerInterface $entityManager){}
+    public function __construct(
+        private EntityManagerInterface $entityManager,
+        private ProductService $productService,
+        private CoinService $coinService
+    ){}
 
     public function __invoke(string $selection):array
     {
@@ -22,27 +27,30 @@ class GetProductService{
             throw new NonExistingProductException();
         }
 
-        if($product->getQuantity() == 0){
+        if($product->getQuantity() === 0){
             return [
                 'message' => 'Product is out of stock',
             ];
         }else{
             $result = [];
-            $amountInserted = $this->getTotalInserted();
-
+            $amountInserted = InsertedCoinRepository::getTotalInserted($this->entityManager);
+            
             if($amountInserted < $product->getPrice()){
                 $result[] = ['message' => 'Please insert more coins'];
             }elseif($amountInserted === $product->getPrice()){
+                $insertedCoins = $this->entityManager->getRepository(InsertedCoin::class)->findAll();
                 $result[] = ['message' => $product->getName()];
+                $this->coinService->addInsertedCoinsToAvaliableCoins($insertedCoins);    
+                $this->productService->decreaseProductNumber($product);
             }else{
-                // Store the inserted coins in the machine
                 $change = $this->calculateChange($product);
                 if(empty($change)){
                     $result[] = ['message' => 'Cannot provide your change'];
                 }else{
-                    $this->deleteSelectCoinstoChangeFromAvailableCoins($change);
-                    $this->addInsertedCoinsToAvaliableCoins();
-                    $this->decreaseProductNumber($product);
+                    $insertedCoins = $this->entityManager->getRepository(InsertedCoin::class)->findAll();
+                    $this->coinService->deleteSelectCoinstoChangeFromAvailableCoins($change);
+                    $this->coinService->addInsertedCoinsToAvaliableCoins($insertedCoins);
+                    $this->productService->decreaseProductNumber($product);
                     $result[] = ['message' => [$product->getName(), ...$change]];
                 }
                     
@@ -53,22 +61,10 @@ class GetProductService{
         }
     }
 
-    private function getTotalInserted(): int
-    {
-        $inserted = $this->entityManager->getRepository(InsertedCoin::class)->findAll();
-        $total = 0;
-
-        $total = array_reduce($inserted, function($total, $insertedCoin) {
-            return $total + ($insertedCoin->getCoinId()->getValue()->value * $insertedCoin->getQuantity());
-        }, $total);
-
-        return $total;
-    }
-
     private function calculateChange(Product $product): array
     {
         // Get the amount of change to return
-        $totalInserted = $this->getTotalInserted();
+        $totalInserted = InsertedCoinRepository::getTotalInserted($this->entityManager);
         $changeToReturn = $totalInserted - $product->getPrice();
 
         // If there is no change to return
@@ -136,34 +132,5 @@ class GetProductService{
 
         // If no valid solution is found
         return false;
-    }
-
-    public function deleteSelectCoinstoChangeFromAvailableCoins(array $change):void
-    {
-        foreach($change as $coin){
-            $coinEntity = $this->entityManager->getRepository(Coin::class)->findOneBy(['value' => $coin]);
-            $coinEntity->setQuantity($coinEntity->getQuantity() - 1);
-            $this->entityManager->persist($coinEntity);
-        }
-        $this->entityManager->flush();
-    }
-
-    private function addInsertedCoinsToAvaliableCoins():void
-    {
-        $insertedCoins = $this->entityManager->getRepository(InsertedCoin::class)->findAll();
-        foreach($insertedCoins as $insertedCoin){
-            $coin = $this->entityManager->getRepository(Coin::class)->findOneBy(['value' => $insertedCoin->getCoinId()->getValue()->value]);
-            $coin->setQuantity($coin->getQuantity() + $insertedCoin->getQuantity());
-            $this->entityManager->persist($coin);
-            $this->entityManager->remove($insertedCoin);
-        }
-        $this->entityManager->flush();
-    }
-
-    private function decreaseProductNumber(Product $product):void
-    {
-        $product->setQuantity($product->getQuantity() - 1);
-        $this->entityManager->persist($product);
-        $this->entityManager->flush();
     }
 } 
