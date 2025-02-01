@@ -40,7 +40,6 @@ class ExceptionListener
         }
 
 
-       
         $response = new JsonResponse([
             'error' => $message,
         ], $statusCode);

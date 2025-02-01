@@ -44,6 +44,7 @@ class GetProductService{
                 $this->productService->decreaseProductNumber($product);
             }else{
                 $change = $this->calculateChange($product);
+                
                 if(empty($change)){
                     $result[] = ['message' => 'Cannot provide your change'];
                 }else{
@@ -51,6 +52,8 @@ class GetProductService{
                     $this->coinService->deleteSelectCoinstoChangeFromAvailableCoins($change);
                     $this->coinService->addInsertedCoinsToAvaliableCoins($insertedCoins);
                     $this->productService->decreaseProductNumber($product);
+
+                    $change = array_map(fn($value) => number_format($value / 100, 2, '.', ''), $change);
                     $result[] = ['message' => [$product->getName(), ...$change]];
                 }
                     
