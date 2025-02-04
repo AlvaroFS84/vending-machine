@@ -29,7 +29,7 @@ class InsertService{
                 $insertedCoin->setQuantity($insertedCoin->getQuantity()+1);
             }else{
                 $insertedCoin = new InsertedCoin();
-                $insertedCoin->setCoinId($coin);
+                $insertedCoin->setCoin($coin);
                 $insertedCoin->setQuantity(1);
             }
 

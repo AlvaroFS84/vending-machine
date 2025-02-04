@@ -41,11 +41,11 @@ class ReturnMoneyServiceTest extends TestCase
         $coinMockTwo->method('getValue')->willReturn(CurrencyValue::QUARTER); 
         
         $insertedCoinMock = $this->createMock(InsertedCoin::class);
-        $insertedCoinMock->method('getCoinId')->willReturn($coinMock);
+        $insertedCoinMock->method('getCoin')->willReturn($coinMock);
         $insertedCoinMock->method('getQuantity')->willReturn(2);
         
         $insertedCoinMockTwo = $this->createMock(InsertedCoin::class);
-        $insertedCoinMockTwo->method('getCoinId')->willReturn($coinMockTwo);
+        $insertedCoinMockTwo->method('getCoin')->willReturn($coinMockTwo);
         $insertedCoinMockTwo->method('getQuantity')->willReturn(1); 
 
         $this->insertedCoinRepository->method('findAll')->willReturn([$insertedCoinMock, $insertedCoinMockTwo]);

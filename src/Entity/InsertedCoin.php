@@ -15,7 +15,7 @@ class InsertedCoin
 
     #[ORM\OneToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Coin $coinId = null;
+    private ?Coin $coin = null;
 
     #[ORM\Column]
     private ?int $quantity = null;
@@ -25,14 +25,14 @@ class InsertedCoin
         return $this->id;
     }
 
-    public function getCoinId(): ?Coin
+    public function getCoin(): ?Coin
     {
-        return $this->coinId;
+        return $this->coin;
     }
 
-    public function setCoinId(Coin $coinId): static
+    public function setCoin(Coin $coin): static
     {
-        $this->coinId = $coinId;
+        $this->coin = $coin;
 
         return $this;
     }

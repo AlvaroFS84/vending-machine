@@ -21,7 +21,7 @@ class InsertedCoinRepository extends ServiceEntityRepository
     public function findByCoin(Coin $coin): ?InsertedCoin
     {
         return $this->createQueryBuilder('i')
-            ->andWhere('i.coinId = :coin')
+            ->andWhere('i.coin = :coin')
             ->setParameter('coin', $coin)
             ->getQuery()
             ->getOneOrNullResult()
@@ -45,7 +45,7 @@ class InsertedCoinRepository extends ServiceEntityRepository
         $total = 0;
 
         foreach ($inserted as $insertedCoin) {
-            $total += $insertedCoin->getCoinId()->getValue()->value * $insertedCoin->getQuantity();
+            $total += $insertedCoin->getCoin()->getValue()->value * $insertedCoin->getQuantity();
         }
 
         return $total;

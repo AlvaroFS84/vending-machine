@@ -100,13 +100,13 @@ class GetProductServiceTest extends TestCase
         $coinForInsertedOne = $this->createMock(Coin::class);
         
         $coinForInsertedOne->method('getValue')->willReturn(CurrencyValue::EURO);
-        $insertedCoinOne->method('getCoinId')->willReturn($coinForInsertedOne);
+        $insertedCoinOne->method('getCoin')->willReturn($coinForInsertedOne);
         $insertedCoinOne->method('getQuantity')->willReturn(1);
 
         
         $coinForInsertedTwo = $this->createMock(Coin::class);
         $coinForInsertedTwo->method('getValue')->willReturn(CurrencyValue::QUARTER);
-        $insertedCoinTwo->method('getCoinId')->willReturn($coinForInsertedTwo);
+        $insertedCoinTwo->method('getCoin')->willReturn($coinForInsertedTwo);
         $insertedCoinTwo->method('getQuantity')->willReturn(1);
 
         

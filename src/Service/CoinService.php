@@ -24,7 +24,7 @@ class CoinService{
     public function addInsertedCoinsToAvaliableCoins(array $insertedCoins):void
     {
         foreach($insertedCoins as $insertedCoin){
-            $coin = $this->entityManager->getRepository(Coin::class)->findOneBy(['value' => $insertedCoin->getCoinId()->getValue()->value]);
+            $coin = $this->entityManager->getRepository(Coin::class)->findOneBy(['value' => $insertedCoin->getCoin()->getValue()->value]);
             $coin->setQuantity($coin->getQuantity() + $insertedCoin->getQuantity());
             $this->entityManager->persist($coin);
             $this->entityManager->remove($insertedCoin);

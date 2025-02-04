@@ -16,7 +16,7 @@ class ReturnMoneyService
 
         foreach($insertedCoins as $insertedCoin){
             for($i = 0; $i < $insertedCoin->getQuantity(); $i++){
-                $result[] = number_format(($insertedCoin->getCoinId()->getValue()->value/100), 2, '.', '');
+                $result[] = number_format(($insertedCoin->getCoin()->getValue()->value/100), 2, '.', '');
             }
         }
 
